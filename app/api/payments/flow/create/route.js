@@ -1,7 +1,6 @@
 // app/api/payments/flow/create/route.js
 // Plantilla servidor para crear sesión de pago con Flow.
-// REMPLAZA URL y payload según documentación oficial de Flow (flow.cl).
-import fetch from 'node-fetch';
+// Usamos fetch global (no node-fetch) — Next.js/Node 18+ lo soporta en runtime server.
 
 export async function POST(request) {
   try {
@@ -15,7 +14,7 @@ export async function POST(request) {
       return new Response(JSON.stringify({ error: 'Flow credentials not configured' }), { status: 500 });
     }
 
-    // Construye el payload según Flow docs
+    // Construye el payload según la API real de Flow (ajusta los campos según su doc)
     const payload = {
       merchant_id: MERCHANT_ID,
       amount: body.amount,
@@ -34,10 +33,15 @@ export async function POST(request) {
     });
 
     const data = await res.json();
-    if (!res.ok) return new Response(JSON.stringify({ error: data }), { status: res.status });
 
-    // data debe contener url de checkout o token
+    if (!res.ok) {
+      // devuelve el error tal cual viene del proveedor
+      return new Response(JSON.stringify({ error: data }), { status: res.status });
+    }
+
+    // data debe contener url de checkout o token, devolverlo al cliente
     return new Response(JSON.stringify(data), { status: 200 });
+
   } catch (err) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
