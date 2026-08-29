@@ -1,4 +1,3 @@
-// app/product/[slug]/page.jsx
 import ProductClient from '../../../components/ProductClient';
 import { getProductBySlug } from '../../../lib/products';
 
@@ -14,7 +13,6 @@ export default async function ProductPage({ params }) {
     <main className="max-w-4xl mx-auto p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="w-full h-96 bg-gray-100 relative overflow-hidden">
-          {/* Usamos img para evitar problemas con next/image/domains si aún no configuraste */}
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
         </div>
 
@@ -26,7 +24,6 @@ export default async function ProductPage({ params }) {
             {new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(product.price)}
           </div>
 
-          {/* Componente cliente que maneja cantidad / add to cart / navegación */}
           <ProductClient product={product} />
         </div>
       </div>
