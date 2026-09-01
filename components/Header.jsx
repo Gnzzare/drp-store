@@ -1,20 +1,31 @@
-// components/Header.jsx
 'use client';
-
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { getCartCount } from '../lib/cart';
+
+const CartDrawer = dynamic(() => import('./CartDrawer'), { ssr: false });
 
 export default function Header() {
   const [count, setCount] = useState(() => {
-    try { return getCartCount(); } catch { return 0; }
+    try {
+      return getCartCount();
+    } catch {
+      return 0;
+    }
   });
   const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     function onCartChange() {
-      try { setCount(getCartCount()); } catch { setCount(0); }
+      try {
+        setCount(getCartCount());
+      } catch {
+        setCount(0);
+      }
     }
+
     window.addEventListener('cart:changed', onCartChange);
     return () => window.removeEventListener('cart:changed', onCartChange);
   }, []);
@@ -26,42 +37,50 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <header className="sticky top-0 z-50 border-b border-black/5 bg-[#f6f1eb]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-md bg-black text-white flex items-center justify-center font-bold">DRP</div>
-              <span className="font-semibold text-lg">drp.cl</span>
+              <div className="brand-mark flex h-10 w-10 items-center justify-center rounded-xl text-xs font-black tracking-[0.14em] text-white">DRP</div>
+              <div>
+                <div className="text-lg font-black tracking-tight">drp.cl</div>
+              </div>
             </Link>
 
-            <Link href="/" className="text-sm px-3 py-2 rounded hover:bg-neutral-100">Catálogo</Link>
-            <Link href="/categorias" className="text-sm px-3 py-2 rounded hover:bg-neutral-100">Categorías</Link>
+            <nav className="hidden items-center gap-2 md:flex">
+              <Link href="/" className="rounded-full px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-white hover:text-neutral-900">Catálogo</Link>
+              <Link href="/categorias" className="rounded-full px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-white hover:text-neutral-900">Categorías</Link>
+            </nav>
           </div>
 
-          <form onSubmit={handleSearch} className="hidden md:flex items-center gap-2">
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar productos..."
-              className="border rounded-md px-3 py-1 w-64 focus:outline-none focus:ring-2 focus:ring-neutral-300"
-            />
-            <button type="submit" className="px-3 py-1 bg-neutral-900 text-white rounded-md">Buscar</button>
+          <form onSubmit={handleSearch} className="hidden flex-1 justify-center md:flex">
+            <div className="flex w-full max-w-md items-center gap-2 rounded-full border border-black/10 bg-white/80 px-3 py-2 shadow-sm">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar productos..."
+                className="w-full bg-transparent text-sm text-neutral-800 placeholder:text-neutral-500 focus:outline-none"
+              />
+              <button type="submit" className="rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-medium text-white">Buscar</button>
+            </div>
           </form>
 
-          <nav className="flex items-center gap-4">
-            <Link href="/cart" className="relative inline-flex items-center px-3 py-2 text-sm text-neutral-700 hover:underline">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setOpen(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-neutral-800 shadow-sm ring-1 ring-black/5 transition hover:bg-neutral-50"
+            >
               Carrito
-              <span className="ml-2 inline-flex items-center justify-center bg-neutral-100 text-neutral-800 rounded-full px-2 py-0.5 text-xs">
-                {count}
-              </span>
-            </Link>
+              <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-[#e8472f] px-1.5 text-xs font-bold text-white">{count}</span>
+            </button>
 
-            {/* Admin ya no está en la barra principal. Se gestionará en admin.drp.cl */}
-            <a href="https://admin.drp.cl" className="text-sm text-neutral-700 hover:underline hidden sm:inline">Acceso Admin</a>
-          </nav>
+            <a href="https://admin.drp.cl" className="hidden rounded-full border border-black/10 bg-white/80 px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-white sm:inline-flex">Acceso Admin</a>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <CartDrawer open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }

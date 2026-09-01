@@ -1,10 +1,58 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #f6f1eb;
+  --panel: #fffaf6;
+  --ink: #161616;
+  --muted: #6b625d;
+  --accent: #e8472f;
+  --accent-dark: #c73826;
+  --line: rgba(22, 22, 22, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 @layer base {
   body {
-    @apply bg-neutral-50 text-neutral-900 antialiased;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    @apply bg-[var(--bg)] text-[var(--ink)] antialiased;
+    font-family: "Inter", "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image: radial-gradient(circle at top, rgba(232, 71, 47, 0.08), transparent 30%);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::selection {
+    background: rgba(232, 71, 47, 0.2);
+  }
+}
+
+@layer components {
+  .brand-mark {
+    background: linear-gradient(135deg, #141414 0%, #292929 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .soft-card {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+  }
+
+  .premium-button {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold transition duration-200;
+    background: linear-gradient(135deg, var(--accent) 0%, #ff7d5c 100%);
+    color: white;
+    box-shadow: 0 16px 30px rgba(232, 71, 47, 0.25);
+  }
+
+  .premium-button:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--accent-dark) 0%, #e8472f 100%);
   }
 }
